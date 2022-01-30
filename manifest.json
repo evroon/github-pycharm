@@ -1,0 +1,24 @@
+{
+    "manifest_version": 2,
+    "name": "GitHub-PyCharm",
+    "version": "1.0",
+    "description": "Opens GitHub files in PyCharm.",
+    "icons": {
+        "48": "icons/border-48.png"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://github.com/*/*/blob/*",
+                "*://github.com/*/*/pull/*",
+                "*://github.com/*/*/pulls"
+            ],
+            "js": [
+                "main.js"
+            ]
+        }
+    ],
+    "permissions": [
+        "contextMenus"
+    ]
+}
