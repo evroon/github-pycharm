@@ -17,8 +17,5 @@
                 "main.js"
             ]
         }
-    ],
-    "permissions": [
-        "contextMenus"
     ]
 }
