@@ -1,15 +1,18 @@
 var get_pycharm_url = function(rel_path, line_number, parent) {
+    // Get the line number from inside a comment's preview window.
     if (parent) {
-        var line_number_elm = parent.querySelectorAll('.blob-num-addition')[1];
-        if (line_number_elm) {
-            line_number = line_number_elm.getAttribute('data-line-number');
+        var line_number_elms = parent.querySelectorAll('.blob-num-addition');
+        if (line_number_elms.length > 1) {
+            line_number = line_number_elms[1].getAttribute('data-line-number');
         }
     }
 
     if (rel_path == null) {
+        // Get the line number from a blob's url
         var url_regex = /.*[/]blob[/][^/]*[/](.*)/;
         rel_path = url_regex.exec(window.location)[1];
     } else {
+        // Get the line number from a PR url ending with R9, for line 9.
         var url_regex = /.*[[^R]*R(.*)/;
         var out = url_regex.exec(window.location);
 
@@ -80,12 +83,12 @@ function add_buttons() {
             add_button_to_preview_window(comment, true);
     } else {
         // Handle "files changed" of PRs
-        var container = document.getElementsByClassName('js-diff-progressive-container');
-        if (container.length < 1)
-            return;
+        var containers = document.getElementsByClassName('js-diff-progressive-container');
 
-        for (preview of container[0].children)
-            add_button_to_preview_window(preview.querySelector('.Link--primary'), false);
+        for (var container of containers) {
+            for (preview of container.children)
+                add_button_to_preview_window(preview.querySelector('.Link--primary'), false);
+        }
     }
 };
 

@@ -14,7 +14,7 @@
                 "*://github.com/*/*/pulls"
             ],
             "js": [
-                "main.js"
+                "content-script.js"
             ]
         }
     ],
