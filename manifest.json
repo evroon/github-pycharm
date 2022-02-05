@@ -17,5 +17,8 @@
                 "main.js"
             ]
         }
-    ]
+    ],
+    "background": {
+        "scripts": ["background-script.js"]
+    }
 }

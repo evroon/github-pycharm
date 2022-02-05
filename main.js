@@ -1,4 +1,11 @@
-var get_pycharm_url = function(rel_path, line_number) {
+var get_pycharm_url = function(rel_path, line_number, parent) {
+    if (parent) {
+        var line_number_elm = parent.querySelectorAll('.blob-num-addition')[1];
+        if (line_number_elm) {
+            line_number = line_number_elm.getAttribute('data-line-number');
+        }
+    }
+
     if (rel_path == null) {
         var url_regex = /.*[/]blob[/][^/]*[/](.*)/;
         rel_path = url_regex.exec(window.location)[1];
@@ -19,27 +26,27 @@ var get_pycharm_url = function(rel_path, line_number) {
 };
 
 var open_pycharm = function(api_url) {
-    window.open(api_url);
+    // We send a request in a background script to avoid CORS issues.
+    browser.runtime.sendMessage({"url": api_url});
 };
 
-function add_button_to_preview_window(link_primary) {
-    var pycharm_element = document.createElement('button');
+function get_parent_recursive(element, count) {
+    return count <= 0 ? element : get_parent_recursive(element.parentNode, count - 1);
+}
 
-    var line_number_elm = link_primary.closest('.file').querySelector("td[data-line-number]");
+function add_button_to_preview_window(link_primary, get_line_number) {
+    var pycharm_element = document.createElement('button');
     var line_number = null;
-    if (line_number_elm) {
-        line_number = line_number_elm.getAttribute('data-line-number');
-    }
-    var pycharm_url = get_pycharm_url(link_primary.textContent, line_number);
+    var parent = get_line_number ? get_parent_recursive(link_primary, 4) : null;
 
     pycharm_element.id = 'btn-pycharm-open';
-    pycharm_element.title = pycharm_url;
+    pycharm_element.title = get_pycharm_url(link_primary.title, line_number, parent);
     pycharm_element.setAttribute('role', 'button');
     pycharm_element.setAttribute('type', 'button');
     pycharm_element.setAttribute('class', 'btn btn-sm ml-auto mr-1');
     pycharm_element.textContent = 'Open in PyCharm';
     pycharm_element.onclick = function() {
-        open_pycharm(pycharm_url);
+        open_pycharm(get_pycharm_url(link_primary.title, line_number, parent));
     };
     pycharm_element.removeAttribute('href');
 
@@ -52,7 +59,7 @@ function add_button_to_blob_dropdown(dropdown) {
     pycharm_element.id = 'btn-pycharm-open';
     pycharm_element.textContent = 'Open in PyCharm';
     pycharm_element.onclick = function() {
-        open_pycharm(get_pycharm_url());
+        open_pycharm(get_pycharm_url(null, null, null));
     };
 
     var li = document.createElement("li");
@@ -70,7 +77,7 @@ function add_buttons() {
     } else if (comments.length > 0) {
         // Handle comments of PRs
         for (var comment of comments)
-            add_button_to_preview_window(comment);
+            add_button_to_preview_window(comment, true);
     } else {
         // Handle "files changed" of PRs
         var container = document.getElementsByClassName('js-diff-progressive-container');
@@ -78,7 +85,7 @@ function add_buttons() {
             return;
 
         for (preview of container[0].children)
-            add_button_to_preview_window(preview.querySelector('.Link--primary'));
+            add_button_to_preview_window(preview.querySelector('.Link--primary'), false);
     }
 };
 
