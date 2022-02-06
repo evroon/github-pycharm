@@ -1,5 +1,6 @@
 # GitHub PyCharm
-This add-on for Firefox adds buttons to GitHub pages that allow you to open files directly in PyCharm.
+This add-on for Firefox adds buttons to GitHub pages that allow you to open files directly in PyCharm. \
+Install url: https://addons.mozilla.org/addon/github-pycharm
 
 ![preview](icons/preview.png)
 
