@@ -9,9 +9,7 @@
     "content_scripts": [
         {
             "matches": [
-                "*://github.com/*/*/blob/*",
-                "*://github.com/*/*/pull/*",
-                "*://github.com/*/*/pulls"
+                "*://github.com/*"
             ],
             "js": [
                 "content-script.js"
