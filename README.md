@@ -25,6 +25,6 @@ This feature is documented (not extensively) in [the docs](https://www.jetbrains
 ## Install manually
 To install this add-on manually, you have two options:
 
-* Temporarily install the add-on: Go to [about:debugging#/runtime/this-firefox](about:debugging#/runtime/this-firefox) and click the `Load Temporary Add-On`, and just select one of the files of this repository.
+* Temporarily install the add-on: Go to `about:debugging#/runtime/this-firefox` and click the `Load Temporary Add-On`, and just select one of the files of this repository.
 
-* Permanently install the add-on: Go to [about:addons](about:addons), press the settings/gears icon and select `Install Add-on from File...` and select a zipped file of this repository.
+* Permanently install the add-on: Go to `about:addons`, press the settings/gears icon and select `Install Add-on from File...` and select a zipped file of this repository.
