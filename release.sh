@@ -1,1 +1,1 @@
-zip -r github-pycharm.zip . -x '*.git*'
+zip -r github-pycharm.zip *.js icons/border-48.png manifest.json
