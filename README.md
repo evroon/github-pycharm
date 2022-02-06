@@ -5,9 +5,9 @@ Install url: https://addons.mozilla.org/addon/github-pycharm
 ![preview](icons/preview.png)
 
 ## Usage
-This add-on works for individual files, comments placed in PRs, the `files changed` tab for PRs and commits.
+This add-on adds buttons in GitHub when viewing individual files, comments placed in PRs, the `files changed` tab of PRs and commits.
 It will add buttons that, if pressed, open files in PyCharm. If you select a line in GitHub, it will
-open the file at the correct line number. The first time, it will ask you to accept this request, which
+open the file at the corresponding line number. The first time, PyCharm will ask you to accept opening files from incoming requests, which
 must be accepted in order for this add-on to work.
 
 This add-on should actually work for any Jetbrains IDE, not just PyCharm.
