@@ -1,5 +1,5 @@
 # GitHub PyCharm
-This add-on adds buttons to GitHub pages that allow you to open files directly in PyCharm.
+This add-on for Firefox adds buttons to GitHub pages that allow you to open files directly in PyCharm.
 
 ![preview](icons/preview.png)
 
@@ -21,3 +21,10 @@ The background script sends an HTTP request to this URL. The Jetbrains IDE liste
 port and will try to find the file you requested and open it in the IDE.
 
 This feature is documented (not extensively) in [the docs](https://www.jetbrains.com/help/idea/php-built-in-web-server.html#configuring-built-in-web-server).
+
+## Install manually
+To install this add-on manually, you have two options:
+
+* Temporarily install the add-on: Go to [about:debugging#/runtime/this-firefox](about:debugging#/runtime/this-firefox) and click the `Load Temporary Add-On`, and just select one of the files of this repository.
+
+* Permanently install the add-on: Go to [about:addons](about:addons), press the settings/gears icon and select `Install Add-on from File...` and select a zipped file of this repository.
