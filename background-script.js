@@ -1,5 +1,5 @@
-browser.runtime.onMessage.addListener(notify);
+browser.runtime.onMessage.addListener(open_pycharm);
 
-function notify(message) {
+function open_pycharm(message) {
     fetch(message.url);
 }
