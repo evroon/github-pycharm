@@ -92,7 +92,8 @@ function add_buttons() {
     }
 };
 
-// It's hard to detect when GitHub opens a new link.
+// It's hard to detect when GitHub opens a new link, so we check periodically
+// whether the buttons have to be inserted.
 setInterval(function()
 {
     if (!document.getElementById('btn-pycharm-open'))
