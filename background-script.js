@@ -20,7 +20,6 @@ async function open_pycharm(request, sender, sendResponse) {
     try {
         await fetchWithTimeout(request.url);
         sendResponse({success: `Opened ${request.rel_path} on line ${request.line_number} (port ${request.port})`});
-        // sendResponse({success: `Opened ${request.url})`});
     } catch (error) {
         // The space at the end of the string is necessary.
         var is_timeout = error.message == 'The operation was aborted. ';
