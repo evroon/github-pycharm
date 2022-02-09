@@ -21,8 +21,8 @@ function get_pycharm_url(rel_path, line_number, parent) {
         if (matches.length > 2)
             line_number = matches[2];
     } else {
-        // Get the line number from a PR url ending with R9, for line 9.
-        var url_regex = /.*[[^R]*R(.*)/;
+        // Get the line number from a PR url ending with R9 or L9, for line 9.
+        var url_regex = /.*[R|L](.*)/;
         var matches = url_regex.exec(window.location);
 
         if (matches && matches.length > 1)
@@ -80,14 +80,16 @@ function get_parent_recursive(element, count) {
 }
 
 function add_button_to_preview_window(link_primary, get_line_number) {
+    if (link_primary.parentNode.getElementsByClassName('btn-pycharm-open').length > 0)
+        return;
+
     var pycharm_element = document.createElement('button');
     var line_number = null;
     var parent = get_line_number ? get_parent_recursive(link_primary, 4) : null;
 
-    pycharm_element.id = 'btn-pycharm-open';
     pycharm_element.setAttribute('role', 'button');
     pycharm_element.setAttribute('type', 'button');
-    pycharm_element.setAttribute('class', 'btn btn-sm ml-auto mr-1');
+    pycharm_element.setAttribute('class', 'btn btn-sm ml-auto mr-1 btn-pycharm-open');
     pycharm_element.textContent = 'Open in PyCharm';
     pycharm_element.onclick = function() {
         open_pycharm(get_pycharm_url(link_primary.title, line_number, parent));
@@ -100,7 +102,7 @@ function add_button_to_preview_window(link_primary, get_line_number) {
 
 function add_button_to_blob_dropdown(dropdown) {
     var pycharm_element = document.getElementById('js-copy-lines').cloneNode(true);
-    pycharm_element.id = 'btn-pycharm-open';
+    pycharm_element.classList.add('btn-pycharm-open');
     pycharm_element.textContent = 'Open in PyCharm';
     pycharm_element.onclick = function() {
         open_pycharm(get_pycharm_url(null, null, null));
@@ -133,10 +135,20 @@ function add_buttons() {
     }
 };
 
+var files_count = document.getElementsByClassName("file-info").length;
+
 // It's hard to detect when GitHub opens a new link, so we check periodically
 // whether the buttons have to be inserted.
+// So we check twice per second whether an update is needed or when
+// more files are being shown in a PR.
 setInterval(function()
 {
-    if (!document.getElementById('btn-pycharm-open'))
+    if (document.getElementsByClassName('btn-pycharm-open').length < 1)
         add_buttons();
+
+    var new_files_count = document.getElementsByClassName("file-info").length;
+    if (files_count != new_files_count) {
+        files_count = new_files_count;
+        add_buttons();
+    }
 }, 500);
