@@ -1,36 +1,78 @@
-var get_pycharm_url = function(rel_path, line_number, parent) {
+const PORT = 63342;
+const ANIM_DURATION = 3000; // milliseconds
+
+
+function get_pycharm_url(rel_path, line_number, parent) {
     // Get the line number from inside a comment's preview window.
+    // Depending on whether there is a suggestion in the comment,
+    // we have to take either the first or second element that we find;
     if (parent) {
         var line_number_elms = parent.querySelectorAll('.blob-num-addition');
-        if (line_number_elms.length > 1) {
-            line_number = line_number_elms[1].getAttribute('data-line-number');
-        }
+        var line_number_elm = line_number_elms.length > 1 ? line_number_elms[1] : line_number_elms[0];
+        line_number = line_number_elm.getAttribute('data-line-number');
     }
 
     if (rel_path == null) {
-        // Get the line number from a blob's url
-        var url_regex = /.*[/]blob[/][^/]*[/](.*)/;
-        rel_path = url_regex.exec(window.location)[1];
+        // Get the relative path from a blob's url
+        var url_regex = /.*[/]blob[/][^/]*[/](.*)#L(.*)/;
+        var matches = url_regex.exec(window.location);
+        rel_path = matches[1];
+
+        if (matches.length > 2)
+            line_number = matches[2];
     } else {
         // Get the line number from a PR url ending with R9, for line 9.
         var url_regex = /.*[[^R]*R(.*)/;
-        var out = url_regex.exec(window.location);
+        var matches = url_regex.exec(window.location);
 
-        if (out && out.length > 1)
-            rel_path += ':' + out[1];
+        if (matches && matches.length > 1)
+            line_number = matches[1];
     }
+    var rel_path_with_line_number = rel_path;
 
-    if (line_number) {
-        rel_path += ':' + line_number;
-    }
+    if (line_number)
+        rel_path_with_line_number += ':' + line_number;
 
-    var rel_path_formatted = rel_path.replace('#L', ':');
-    return `http://localhost:63342/api/file/${rel_path_formatted}`;
+    return {
+        'rel_path': rel_path,
+        'line_number': line_number ? line_number : 1,
+        'port': PORT,
+        'url': `http://localhost:${PORT}/api/file/${rel_path_with_line_number}`,
+    };
 };
 
-var open_pycharm = function(api_url) {
+function show_message(type = 'success', message) {
+    var toast = document.getElementsByClassName(`anim-fade-in fast Toast Toast--${type}`)[0];
+    toast.getElementsByClassName('Toast-content')[0].textContent = message
+    toast.removeAttribute('hidden');
+
+    setTimeout(function()
+    {
+        toast.classList.add('anim-fade-out');
+        setTimeout(function()
+        {
+            toast.setAttribute('hidden', '');
+            toast.classList.remove('anim-fade-out');
+        }, 310);
+    }, 3000);
+}
+
+function handleResponse(message) {
+    if (!message)
+        return;
+
+    if (message.hasOwnProperty('success'))
+        show_message('success', message.success);
+    else if (message.hasOwnProperty('error'))
+        show_message('error', message.error);
+    else
+        show_message('error', message);
+}
+
+function open_pycharm(data) {
     // We send a request in a background script to avoid CORS issues.
-    browser.runtime.sendMessage({"url": api_url});
+    var sending = browser.runtime.sendMessage(data);
+    sending.then(handleResponse, null);
 };
 
 function get_parent_recursive(element, count) {
@@ -43,7 +85,6 @@ function add_button_to_preview_window(link_primary, get_line_number) {
     var parent = get_line_number ? get_parent_recursive(link_primary, 4) : null;
 
     pycharm_element.id = 'btn-pycharm-open';
-    pycharm_element.title = get_pycharm_url(link_primary.title, line_number, parent);
     pycharm_element.setAttribute('role', 'button');
     pycharm_element.setAttribute('type', 'button');
     pycharm_element.setAttribute('class', 'btn btn-sm ml-auto mr-1');
